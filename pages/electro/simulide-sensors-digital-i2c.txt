@@ -20,88 +20,14 @@ The DS1621 sensor is defined by the **Ds1621** class (ds1621.cpp and ds1621.h) i
 <code bash>
 src/gui/circuitwidget/components/logic/
 </code> 
-This class inherits from LogicSensor. We will now have a quick view on this code and explain the main elements.
+This class inherits from LogicSensor class. We will now have a quick view on this code and explain the main elements.
 
-First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
+First we  insert the sensor in the SimulIDE item library in the "Experimental Ensta Bretagne" group we have created for the analog sensor. In fact, all experimental stuff will go here. We define the sensor with a short name, an icon and its corresponding class :
 <code c++>
-
-// create an entry with this component in the item library
-LibraryItem* SensorStrainGauge::libraryItem()
-{
-    return new LibraryItem(
-        tr( "Force - Metal Strain Gauge" ),
-        tr( "Experimental Ensta Bretagne" ),
-        "sensor_strain_gauge.png",
-        "Force sensor (strain gauge)",
-        SensorStrainGauge::construct );
-}
 </code>
 
 The main function is the constructor of the **SensorStrainGauge** object :
 <code c++>
-// create the component layout
-SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
-  : Sensor( parent, type, id )
-  , eElement( (id+"-eElement").toStdString() )
-  , m_pinA (180, QPoint(-20,0), id+"-PinA", 0, this)
-  , m_pinB (0, QPoint(20,0), id+"-PinB", 0, this)
-  , m_pinM (0, QPoint(0,0), id+"-PinM", 0, this)  // useless , but comply with constructor
-  , m_ePinA( (id+"-ePinA").toStdString(), 1 )
-  , m_ePinB( (id+"-ePinB").toStdString(), 1 )
-  , m_res ((id+"-res").toStdString())
-  {
-    Q_UNUSED( SensorStrainGauge_properties );
-
-    // connect resistor pins
-    m_res.setEpin (0,&m_pinA);
-    m_res.setEpin (1,&m_pinB);
-
-    // check pin connections
-    m_ePinTst1 = m_res.getEpin (0);
-    m_ePinTst2 = m_res.getEpin (1);
-    
-    // area of component graphics representation
-    m_area = QRectF(-16,-40,32,50);
-   
-    // define the units and reset the sensor
-    m_sense_unit = "N";
-    m_unit = "Ω";
-    setSense (0);  // start at 0 Newton
-
-    // define the positions of all the labels
-    m_idLabel->setPos(-12,24);
-    setLabelPos(-18,-30, 0);
-    setSenseLabelPos(-12, 6, 0);
-    setValLabelPos(-16, 40, 0);
-
-    // display or not the labels
-    setShowId( false );
-    setShowSense ( true );
-    setShowVal( false );
-
-    // setup the dial widget
-    m_dialW.setupWidget();
-    m_dialW.setFixedSize( 24, 24 ); // 24,24
-    m_dialW.dial->setMinimum(m_sense_min);
-    m_dialW.dial->setMaximum(m_sense_max); 
-    m_dialW.dial->setValue(m_sense_value*m_sense_unitMult);
-    m_dialW.dial->setSingleStep(m_sense_step);
-    
-    // creates and initializes the dial widget
-    m_proxy = Circuit::self()->addWidget( &m_dialW );
-    m_proxy->setParentItem( this );
-    m_proxy->setPos( QPoint( -12, 18) );
-    
-    m_dial = m_dialW.dial;
-
-    // add the component in the simulation
-    Simulator::self()->addToUpdateList( this );
-
-    // add an event when dial widget changes
-    connect( m_dial, SIGNAL(valueChanged(int)),
-             this,   SLOT  (senseChanged(int)) );
-
-  }
 </code>
 In this code, we do the following operations : 
   * defining and connecting the two pins of the sensor resistor 
