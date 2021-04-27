@@ -1,0 +1,64 @@
+The instructions to install docker on Ubuntu 18.04 are summarized here.
+
+
+First we need to add docker repository to the repo list.
+<cli>
+$ sudo apt update
+$ sudo apt install apt-transport-https ca-certificates curl software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+$ apt-cache policy docker-ce # candidate install should be listed
+$ apt update
+$ sudo apt install docker-ce
+</cli>
+
+The docker network interface must have been created :
+<cli>
+$ ifconfig docker0
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.255.0  broadcast 172.17.0.255
+        ...
+</cli>
+
+If 172.17.0.1/24 network IP address range is already used, we need to change it. For this we need to 
+modify or create(if it does not exist) the /etc/docker/daemon.json. In this file we need to specify the
+new IP range:
+<code json>
+{
+  "bip": "172.19.0.1/24"
+}
+</code>
+The IP range is set to 172.19.0.1/24. To have the docker daemon taking this into account, docker service must be restarted :
+<cli>
+$ sudo systemctl restart docker
+</cli>
+We can check all was going fine :
+<cli>
+$ ifconfig docker0
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.19.0.1  netmask 255.255.255.0  broadcast 172.19.0.255
+</cli>
+
+By default, the docker commands must be executed as root (or via sudo). It can be convenient to run docker at user level. This can be done by adding the user in the docker group.
+
+<cli>
+$ sudo usermod -aG docker ${USER}
+</cli>
+
+The action take effect after de-connecting/reconnecting to the session. To have immediate effect, su can be used:
+
+<cli>
+$ su - ${USER}
+# check if ok using groups
+$ groups
+newubu adm cdrom sudo dip plugdev lpadmin sambashare kvm libvirt docker
+# or id
+$ id -nG
+newubu adm cdrom sudo dip plugdev lpadmin sambashare kvm libvirt docker
+</cli>
+
+Docker can now be used by standard user. We can check if have some containers defined, normally it should be empty.
+<cli>
+$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+</cli>

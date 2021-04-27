@@ -1,0 +1,28 @@
+go back to [[electro:simulide|SimulIDE]]
+
+The code source can be downloaded [[https://simulide.blogspot.com/p/downloads.html|here]]. 
+Then we decompress and follow the instructions in the **readme.md**
+<code bash>
+tar xf SimulIDE_0.3.12-SR8_Sources.tar.gz
+cd SimulIDE_0.3.12-SR8_Sources/build_XX
+qmake
+</code>
+If some QT5 packages are missing, **qmake** will tell it, for example :
+<code text>
+# Project ERROR: Unknown module(s) in QT: serialport
+</code>
+You just need to install these missing packages, e.g.
+<code bash>
+sudo apt install libqt5serialport5-dev
+</code>
+
+When all is ok with **qmake**, go for **make**
+<code bash>
+make
+</code>
+
+If libelf is not installed, this produces a compilation error, you just need to install the dev
+version of this library :
+<code bash>
+sudo apt install libelf-dev
+</code>

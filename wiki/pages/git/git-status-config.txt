@@ -1,0 +1,8 @@
+Back to [[git:main-git|git main page]]
+
+To list the history of all commits, the newer first :
+
+<code bash>
+git log --stat
+</code>
+This is a page by page view, to go to next page type 'space bar' and to quit type 'q'.

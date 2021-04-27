@@ -1,0 +1,8 @@
+Back to [[:start|Main Info Page]]
+
+Various stuff to configure Linux on a robot. Most stuff for Ubuntu 18.04 LTS
+
+  * [[ntp:main-ntp#1|ntp : time sync the robot's clock with a time server]]
+  * [[bash:main-bash#1|bash : some useful line commands ...]]
+  * [[rsync:main-rsync#1|bash : how to manage (synchronize) same folder on different computers ...]]
+  * [[python3default:main-python3defaut#1|set manually python3 as default]]
