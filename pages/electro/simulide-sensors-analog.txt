@@ -60,6 +60,70 @@ LibraryItem* SensorStrainGauge::libraryItem()
 }
 </code>
 
+The main function is the constructor of the *SensorStrainGauge** object :
+<code c++>
+
+// create the component layout
+SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
+  : Sensor( parent, type, id )
+  , eElement( (id+"-eElement").toStdString() )
+  , m_pinA (180, QPoint(-20,0), id+"-PinA", 0, this)
+  , m_pinB (0, QPoint(20,0), id+"-PinB", 0, this)
+  , m_pinM (0, QPoint(0,0), id+"-PinM", 0, this)  // useless , but comply with constructor
+  , m_ePinA( (id+"-ePinA").toStdString(), 1 )
+  , m_ePinB( (id+"-ePinB").toStdString(), 1 )
+  , m_res ((id+"-res").toStdString())
+  {
+    Q_UNUSED( SensorStrainGauge_properties );
+
+    // connect resistor pins
+    m_res.setEpin (0,&m_pinA);
+    m_res.setEpin (1,&m_pinB);
+
+    // check pin connections
+    m_ePinTst1 = m_res.getEpin (0);
+    //std::string ePinId1 = m_ePinTst1->getId();
+    //std::cout  << "SensorStrainGauge::SensorStrainGauge" << ePinId1 << std::endl;
+    m_ePinTst2 = m_res.getEpin (1);
+    //std::string ePinId2 = m_ePinTst2->getId();
+    //std::cout  << "SensorStrainGauge::SensorStrainGauge" << ePinId2 << std::endl;
+    
+    // area of component graphics representation
+    m_area = QRectF(-16,-40,32,50);
+   
+    m_idLabel->setPos(-12,24);
+    m_sense_unit = "N";
+    m_unit = "Ω";
+    setSense (0);  // start at 0 °C
+    setLabelPos(-18,-30, 0);
+    setSenseLabelPos(-12, 6, 0);
+    setValLabelPos(-16, 40, 0);
+    setShowId( false );
+    setShowSense ( true );
+    setShowVal( false );
+
+    m_dialW.setupWidget();
+    m_dialW.setFixedSize( 24, 24 ); // 24,24
+    m_dialW.dial->setMinimum(m_sense_min);
+    m_dialW.dial->setMaximum(m_sense_max); 
+    m_dialW.dial->setValue(m_sense_value*m_sense_unitMult);
+    m_dialW.dial->setSingleStep(m_sense_step);
+    
+    m_proxy = Circuit::self()->addWidget( &m_dialW );
+    m_proxy->setParentItem( this );
+    m_proxy->setPos( QPoint( -12, 18) );
+    
+    m_dial = m_dialW.dial;
+
+    
+    Simulator::self()->addToUpdateList( this );
+
+    connect( m_dial, SIGNAL(valueChanged(int)),
+             this,   SLOT  (senseChanged(int)) );
+
+  }
+</code>
+
 
 ===== Adding an Icon or an Image =====
 We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the **src/icons/components** folder :
