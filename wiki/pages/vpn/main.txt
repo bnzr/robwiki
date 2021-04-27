@@ -1,0 +1,12 @@
+VPN can be used to get a remote access to the internal network of the school. In the standard configuration, you need to now the IP address of the computers you want to access. To circumvent this, you can add the following lines at the end of the OpenVPN configuration file called **openvpn_client.ovpn** :
+<code>
+script-security 2
+up /etc/openvpn/update-resolv-conf
+down /etc/openvpn/update-resolv-conf
+</code>
+if it does not work, you have to install the **resolvconf** package, e.g on Ubuntu :
+<code bash>
+sudo apt-get install resolvconf
+</code>
+
+You have probably noticed that when using the VPN you have access to all computers on the school's network but you loose access to the Internet. If you are using linux and have two network interfaces on your computer, you put one on the internet 

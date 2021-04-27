@@ -1,0 +1,29 @@
+Back to [[git:main-git|git main page]]
+
+We want to create a git project from an existing code in the folder called **existing_dir**.
+The local git is created with **init** and then we add all the files from existing_dir in the git repository and make the first commit :
+<code bash>
+cd existing_dir
+git init
+git add .     
+git commit -m 'message'
+</code>
+Fill 'message' with an appropriate message , e.g. 'my first commit'
+
+If you just want to add selected files, there are several ways to do it. You can create a **.gitignore** file with all the files and folders you don't want to manage with **git**. Another way is to add only to **git** some selected files, for example the Python files :
+<code bash>
+cd existing_dir
+git init
+git add *.py    
+git commit -m 'message'
+</code>
+
+We can now push it to the web on your GitLab account. Here **user** should be replaced by your account name and **existing_dir** by the project name.
+
+<code bash>
+git push --set-upstream https://gitlab.com/user/existing_dir.git master
+</code>
+
+For ENSTA Bretagne's GitLab, the user is defined with the 6+2 id code (ex tournetr for Tryphon Tournesol). You will have to type the id and the password to complete the push. 
+
+After that, you can check that the project has correctly been created on GitLab by typing the URL (https://gitlab.com/user/existing_dir.git) in a wEB browser :
