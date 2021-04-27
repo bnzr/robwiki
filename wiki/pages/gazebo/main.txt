@@ -1,5 +1,0 @@
-Back to [[:start|Main Info Page]]
-
-  - [[gazebo:download-test#v1|Download and test gazebo]]
-  - [[gazebo:simple-arm#v1|First simple gazebo model : simple arm]]
-

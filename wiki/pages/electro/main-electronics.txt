@@ -1,3 +1,0 @@
-go back to [[:start|main page]]
-
-  * [[electro:simulide|SimulIDE : a multi platform open-source electronic simulator]]

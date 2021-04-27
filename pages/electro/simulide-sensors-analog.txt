@@ -1,0 +1,14 @@
+go back to [[electro:simulide-sensors|Adding Sensors to SimulIDE]]
+
+After decompressing the sources, we consider make the change using Linux. The procedure should be similar with Windows10 or MacOS. First we build and test the initial configuration with the original source files :
+
+<code bash>
+cp -r build_xx build_linux
+cd build_linux
+qmake
+make
+./executables/SimulIDE_0.4.15-Final/bin/simulide 
+</code>
+
+We supposed all required QT5 packages have been installed. If not qmake will tell what packages are missing and have to be installed. If everything goes fine, the SimulIDE window should appear.
+ 
