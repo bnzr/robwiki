@@ -35,7 +35,7 @@ LibraryItem* Ds1621::libraryItem()
 }
 </code>
 
-The main function is the constructor of the **SensorStrainGauge** object :
+The main function is the constructor of the **Ds1621** object :
 <code c++>
 </code>
 In this code, we do the following operations : 
@@ -51,52 +51,15 @@ In this code, we do the following operations :
 
 In this class, we have important functions to provide to the simulator. First we need to define what is done at every simulation step, this is done  by the function **updateStep()** :
 <code c++>
-void SensorStrainGauge::updateStep()
-{
-    m_step = Simulator::self()->step();
-    double t = (double) m_step/1e6;
-    double dt = t - m_t0_tau;
-
-    m_new_resist = sensorFunction (m_sense);
-    double dr = m_new_resist - m_last_resist;
-    // Simulate time constant with a first order linear lowpass filter
-    m_resist = m_last_resist + dr * (1.0 -exp(-dt/m_tau));
-    
-    setUnit (" ");
-    setResist ( m_resist);
-
-    //qDebug() << "SensorStrainGauge::SensorStrainGauge" << m_res.res() << m_res.current()
-    //	     << m_ePinTst1->isConnected() << m_ePinTst2->isConnected() ;
-   
-    m_last_step = m_step;
-}
 </code>
 Here we use a first order linear lowpass filter to simulate the time constant of the sensor (this can be removed if you do not need time constant simulation). The commented **qDebug()** is usefull for checking that the sensor works properly.
 
 A second interesting function is **paint()** that will draw the sensor in the circuit design area. Here we use a small image to represent the sensor, but this can also be done qith Qt drawing functions.
 <code c++>
-void SensorStrainGauge::paint( QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget )
-{
-    Component::paint( p, option, widget );
-    p->drawRect( -16, -4, 32, 8 );
-    p->drawImage(QRect(-15, -40, 30, 30),
-		 QImage(QString(":/sensor_strain_gauge.png")));
-}
 </code>
 
 A third interesting function is **** than compute the resistance **r_sense** of the resistor as the function of the sensor value **sense**. Here we implement a classical strain gauge function with temperature dependency.
 <code c++>
-double SensorStrainGauge::sensorFunction (double sense)
-{
-  double r_sense;
-  m_k_long = 1+2.0*m_coef_poisson+m_cste_bridgman*(1-2*m_coef_poisson);
-  m_k = m_k_long * (1 - m_coef_transverse);
-  m_section_body = m_h_body * m_w_body;
-  m_delta_r = m_r0*m_k*sense/(m_young_modulus*m_section_body);
-  m_delta_r_t = (m_alpha_r+m_k*(m_lambda_s - m_lambda_j)) * (m_temperature - m_reference_temperature) * m_r0;
-  r_sense = m_r0 + m_delta_r + m_delta_r_t;
-  return r_sense;
-}
 </code>
 ===== Adding an Icon or an Image =====
 We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the **src/icons/components** folder :
