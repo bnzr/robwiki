@@ -1,0 +1,7 @@
+Back to [[:start|Main Info Page]]
+
+Examples of some interesting tools for video acquisition, conversion and streaming are presented here.
+For acquisition and conversion **ffmpeg** is a powerful tool. It can also be used for building video, adding effects and sound. For streaming **ffmpeg** can be used too. However, **gstreamer** is also intersecting in the way it pipes modules. 
+ 
+  * [[ffmpeg:main-ffmpeg#1|ffmpeg]]
+  * [[gstreamer:main-gstreamer#1|gstreamer]]

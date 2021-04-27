@@ -1,0 +1,38 @@
+Back to [[ros:main-ros|ROS main page]]
+
+Here we will see how to publish a topic on a robot and to subscribe to it on a control laptop.
+
+Considering that the IP address of the robot is 172.20.25.204 (DDBoat n°4) and that the IP address of the control laptop is 172.20.26.81, and that the roscore runs on the laptop. The laptop will be the ROS_MASTER_URI.
+
+On the robot terminal, we set the following environment variables:
+<code bash>
+export ROS_IP=172.20.25.203
+export ROS_HOSTNAME=172.20.25.203
+export ROS_MASTER_URI=http://172.20.26.81:11311
+</code>
+
+On the laptop, we set the same variables :
+<code bash>
+export ROS_IP=172.20.26.81
+export ROS_HOSTNAME=172.20.26.81
+export ROS_MASTER_URI=http://172.20.26.81:11311
+</code>
+
+We can now make a test by publishing a float every seconds of the robot :
+<code bash>
+rostopic pub -r 1  my_topic std_msgs/Float64 1.0
+</code>
+
+We can now echo the topic on the LapTop :
+<code bash>
+rostopic echo /my_topic
+</code>
+and we should get :
+<code bash>
+data: 1.0
+---
+data: 1.0
+---
+</code>
+
+ 

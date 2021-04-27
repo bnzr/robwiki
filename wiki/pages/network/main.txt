@@ -1,0 +1,4 @@
+Some stuff to configure networks
+  * [[vpn:main#v1|VPN]]
+  * [[network:routes_rules#v1|Routes and rules]]
+  * [[network:network_namespaces#1|Network namespaces]]

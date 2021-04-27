@@ -1,0 +1,16 @@
+Try following tutorial in https://dev.to/darksmile92/run-gui-app-in-linux-docker-container-on-windows-host-4kde
+
+First install the X Server VcXsrv. Download from https://sourceforge.net/projects/vcxsrv/ . Then run the installer
+**vcxsrv-64.1.20.6.0.installer**.
+
+Once installed, execute XLaunch from VcXsrv.
+  * Select  "Multiple Windows", let "Display Number" to -1 so that the program automatically chose it, then "next"
+  * Select  "Start No Client", then next
+  * Select "all boxes", then "next"
+  * Click on "save configuration", then "finish"
+
+
+The docker installation is defined in https://docs.docker.com/docker-for-windows/install/
+It requires windows 10 pro. See https://rdl.ensta-bretagne.fr/ to upgrade windows on this computer.
+
+

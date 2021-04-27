@@ -1,0 +1,16 @@
+This summarizes beginner level creation and use of docker containers.
+
+The first thing is to install docker. We will do it on Ubuntu 18.04 folliwing the instructions given in 
+ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04. The installation is summerized here :
+
+[[docker:install-run#1|Install Docker on Ubuntu 18.04 and run it at user level]]
+
+
+As we use V-REP for modeling and simulating our robots, we will try to launch V-REP from a container to avoid configuration issues between Ubuntu and Centos. 
+
+[[docker:first-nvidia-container#1|Create a first container to use V-REP on NVIDIA graphic board]]
+
+
+Attempt to use a graphic container on Windows :
+
+[[docker:windows-fisrt-try#1|First try of docker on Windows 10]]

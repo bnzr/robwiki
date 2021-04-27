@@ -1,0 +1,156 @@
+Back to [[video:video-streaming|]]
+
+
+
+**gstreamer** can be used to stream and to acquire videos. For video acquisition we prefer to use **ffmpeg**. We will present some streaming examples here.
+If **gstreamer** is not installed, you can do this (hopefully it's exhaustive):
+<code bash>
+sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+</code>
+
+====== Basic commands ======
+
+The first basic thing is to stream a demo video provided in **gstreamer** examples. The "bouncing ball" example can be streamed on the desktop screen with **gst-launch-1.0**:
+ 
+<code bash>
+gst-launch-1.0 videotestsrc pattern="ball" is-live=True ! videoconvert ! videorate ! autovideosink
+</code>
+**gst-launch-1.0** needs a source, here it is **videotestsrc**. Then, all the modules are then piped with the ! character. Finally it requires to have an output, here it is the screen **autovideosink**.
+We can add time display overlay in the upper left part of the video stream with  **clockoverlay** module :
+<code bash>
+gst-launch-1.0 videotestsrc pattern="ball" is-live=True ! videoconvert ! clockoverlay ! videorate ! autovideosink
+</code>
+
+We can stream the content of the desktop screen with :
+<code bash>
+gst-launch-1.0 ximagesrc ! videoconvert ! clockoverlay ! autovideosink
+</code>
+The second screen (e.g. starting at startx=1280) can be acquired, scaled, and displayed, for example, in a 640x480 window :
+<code bash>
+gst-launch-1.0 ximagesrc startx=1280 use-damage=0 ! video/x-raw,framerate=30/1 ! videoscale method=0 ! video/x-raw,width=640,height=480  ! ximagesink
+</code>
+
+The camera of a laptop, or an USB webcam, can be streamed as well, by just changing the source to **v4l2src**, the only thing to know is the name of the camera device :
+<code bash>
+gst-launch-1.0 v4l2src device="/dev/video0" ! videoconvert ! clockoverlay ! autovideosink
+</code>
+
+
+A network camera defined with an IP address and transmitting using RTSP protocol can be streamed to our desktop screen. We need to know the IP address, the credentials (userid and password) and the path to the stream. Here is an example with an AXIS M3046-V at 192.168.1.101 :
+<code bash>
+gst-launch-1.0 rtspsrc location=rtsp://userid:password@192.168.1.101/axis-media/media.amp ! rtph264depay ! avdec_h264 !  autovideosink
+</code>
+If the camera provides a stream in MJPEG (ex. same AXIS M3046-V camera), it can be displayed with :
+<code bash>
+gst-launch-1.0 souphttpsrc location=http://userid:password@192.168.1.101/mjpg/video.mjpg ! multipartdemux ! jpegdec ! autovideosink
+</code>
+
+====== Streaming in HTML on a web page ======
+
+There are several ways to stream on a HTML web page. Two simple ways are described and tested here : **HLS** and **DASH**.
+
+===== Streaming using HLS =====
+
+HLS stands for HTTP Live Streaming. We will make a test with the video camera of the laptop (v4l2 driver, /dev/video0 device). We create the **hlstest** folder where we will place all the required files to do the HTTP streaming.
+<code bash>
+cd
+mkdir hlstest
+cd hlstest
+gst-launch-1.0 v4l2src device="/dev/video0" ! videoconvert ! clockoverlay ! x264enc tune=zerolatency ! mpegtsmux ! hlssink playlist-root=http://192.168.1.15:8080 playlist-location=playlist_test.m3u8 location=/home/user/hlstest/segment_%05d.ts target-duration=5 max-files=5
+</code>
+**user** has to be replaced by your user name on Linux and **192.168.1.15** by the IP address of your computer.
+In the **hlstest** folder, the playlist file (playlist_test.m3u8) and up to 5 video snippets (segment_*.ts) have been created. Only the 5 newest files are kept (the number of files is defined by max-files parameter). 
+These files will be used by the web page to display the stream. An HTML file (index.html) is created and stored in the **hlstest** folder. The content of index.html is :
+<code html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>My live video</title>
+  <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+</head>
+<body>
+  <h1>My live video - simple HLS player</h1>
+
+  <video-js id="video_id" class="vjs-default-skin" controls preload="auto" width="640" height="360">
+    <source src="http://192.168.1.15:8080/playlist_test.m3u8" type="application/x-mpegURL">
+  </video-js>
+  <script src="https://unpkg.com/video.js/dist/video.js"></script> markdown
+  <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.js"></script>
+  <script>
+    var player = videojs('video_id');
+  </script>
+  
+</body>
+</html>
+</code>
+Replace 192.268.1.15 with the IP address of your computer. Open a new terminal or a new tab in the current terminal and start the web server with python :
+<code bash>
+python -m SimpleHTTPServer 8080
+</code>
+
+Here we tested the streaming with a Python web server. But, this can easily be done with Apache2 web server by placing the **hlstest** folder somewhere under /var/www/html and modifying the paths in gst-launch-1.0 command.
+
+To stream on HTML a RTSP stream from an IP camera, only the source changes. For example, an Axis  M3046-V at 192.168.1.101 with userid and password credentials (warning, not optimized and time consuming as it decodes and re-encodes h264) :
+<code bash>
+gst-launch-1.0 rtspsrc location=rtsp://userid:password@192.168.1.101/axis-media/media.amp ! rtph264depay ! avdec_h264 ! x264enc tune=zerolatency ! mpegtsmux ! hlssink playlist-root=http://192.168.1.15:8080 playlist-location=playlist_test.m3u8 location=/home/user/hlstest/segment_%05d.ts target-duration=5 max-files=5
+</code>
+
+===== Streaming using DASH =====
+
+**DASH** stands for Dynamic Adaptive Streaming over HTTP and is also known as MPEG-DASH. The principle is the same as for **HLS**, we will create in a folder and place all the required files in it. To go a bit faster, this time we will write the playlist and the video snippets in memory instead of on hard drive.
+
+<code bash>
+sudo mkdir /dev/shm/mpeg-dash
+cd
+ln -s /dev/shm/mpeg-dash /home/user/streaming
+cd streaming
+</code>
+replace **user** by your Linux user's name and create in **streaming** folder an **index.html** file with :
+<code html>
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<style>
+    video {
+        width: 1024px;
+        height: 576px;
+    }
+</style>
+<body>
+    <div>
+        <video data-dashjs-player autoplay controls src="manifest.mpd" type="application/dash+xml"></video>
+    </div>
+</body>
+</html>
+</code>
+Here we use **ffmpeg** to produces the video snippets and the playlist. userid and password are the credentials to access the IP camera. 192.168.1.101 is the IP address of the IP camera and user is the Linux username. The RTSP URL on which the IP camera is streaming is generally given in the manual.
+<code bash>
+ffmpeg -i rtsp://userid:password@192.168.1.101/axis-media/media.amp -an -c:v copy -b:v 2000k -f dash -window_size 4 -extra_window_size 0 -min_seg_duration 2000000 -remove_at_exit 1 /home/user/streaming/manifest.mpd
+</code> 
+
+Then, in another tab or another terminal, start a minimal web server :
+<code bash>
+python -m SimpleHTTPServer 8080
+</code> 
+
+Finally, we can check the stream on a web page by typing the URL in a browser:
+<code bash>
+localhost:8080
+</code>
+
+To have it working in an Apache2 web server, the **streaming** symbolic link should be placed somewhere under /var/www/html.
+
+Instead of RTSP we can use MJPEG format :
+<code bash>
+ffmpeg -i rtsp://userid:password@192.168.1.101/axis-media/media.amp -an -c:v copy -b:v 2000k -f dash -window_size 4 -extra_window_size 0 -min_seg_duration 2000000 -remove_at_exit 1 /home/user/streaming/manifest.mpd
+</code>
+
+
+====== Useful links ======
+
+These links have been very useful to build this wiki page :
+
+  * [[http://4youngpadawans.com/stream-live-video-to-browser-using-gstreamer|]]
+  * [[https://gist.github.com/kevinGodell/f91ae4087b0a56c138842dbb40cbfe7c|]]
