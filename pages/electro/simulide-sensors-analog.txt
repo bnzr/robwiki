@@ -137,6 +137,34 @@ In this code, we do the following operations :
   * adding the component to the simulation
   * creating an event when dial widget changes 
 
+In this class, we have important functions to provide to the simulator. First we need to define what is done at every simulation step, this is done  by the function **updateStep()** :
+<code c++>
+void SensorStrainGauge::updateStep()
+{
+    m_step = Simulator::self()->step();
+    double t = (double) m_step/1e6;
+    double dt = t - m_t0_tau;
+
+    m_new_resist = sensorFunction (m_sense);
+    double dr = m_new_resist - m_last_resist;
+    // Simulate time constant with a first order linear lowpass filter
+    m_resist = m_last_resist + dr * (1.0 -exp(-dt/m_tau));
+    
+    setUnit (" ");
+    setResist ( m_resist);
+
+    //qDebug() << "SensorStrainGauge::SensorStrainGauge" << m_res.res() << m_res.current()
+    //	     << m_ePinTst1->isConnected() << m_ePinTst2->isConnected() ;
+   
+    m_last_step = m_step;
+}
+</code>
+Here we use a first order linear lowpass filter to simulate the time constant of the sensor (this can be removed if you do not need time constant simulation). The commented **qDebug()** is usefull for checking that the sensor works properly.
+
+A second intersecting function is **paint()** that will draw the sensor in the circuit design area. Here we use a small image to represent the sensor, but this can also be done qith Qt drawing functions.
+<code c++>
+
+</code>
 ===== Adding an Icon or an Image =====
 We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the **src/icons/components** folder :
 <code bash>
