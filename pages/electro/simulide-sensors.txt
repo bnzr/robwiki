@@ -8,3 +8,5 @@ For electronic labs to run on simulation, SimulIDE can be a very convenient tool
 * [[electro:simulide-sensors-analog|SimulIDE : add an analog resistive sensor]]
 
 * [[electro:simulide-sensors-digital-i2c|SimulIDE : add an I2C digital sensor]]
+
+
