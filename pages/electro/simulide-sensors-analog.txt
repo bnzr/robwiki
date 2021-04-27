@@ -219,7 +219,9 @@ qmake & make
 </code>
 
 SimulIDE should have started and the new experimental menu should appear as this :
+
 {{:electro:simulide-strain-gauge-menu.png?400|}}
 
 The strain gauge sensor can now be used in a circuit as shown here when inserted in a voltage divider; Note that such sensor with little changes in resistance should preferably be inserted in a Wheatstone bridge.
+
 {{:electro:simulide-strain-gauge-circuit.png?400|}}
