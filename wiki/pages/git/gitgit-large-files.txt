@@ -1,0 +1,16 @@
+Back to [[git:main-git|git main page]]
+
+Sometimes when trying to clone repos with large file , a curl error can occur :
+<code text>
+Cloning into 'project'... error: RPC failed; HTTP 502 curl 22 The requested URL returned error: 502 fatal: the remote end hung up unexpectedly
+</code>
+
+Change the buffer size : 
+<code bash>
+git config http.postBuffer 524288000
+</code>
+and then set the origin ::
+<code bash>
+git remote add origin git@github.com:username/project.git
+</code>
+after that clone your project. Your problem should be resolved.

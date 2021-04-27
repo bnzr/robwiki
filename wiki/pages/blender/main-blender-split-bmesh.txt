@@ -1,0 +1,166 @@
+Back to [[vrep:blender_help-design|Blender Help Design]]
+
+Here we split the mesh of a full wheel in two meshes :
+  * a mash for the tyre
+  * a mesh for the rim
+
+<code python>
+import bpy
+import bmesh
+import os
+import math
+
+# debug function
+def print_mesh (object_name):
+    bpy.ops.object.mode_set(mode='OBJECT')
+    o = bpy.data.objects[object_name]
+    o.select_set(True)
+    #print (dir(o)) 
+    #print (o.type)
+    me = o.to_mesh()
+    #print (dir(me)) 
+    print (len(me.vertices),"vertices (3 points in space)")
+    print (len(me.edges) ,"edges (reference 2 vertices)")
+    print (len(me.loops) , "loops (reference a single vertex and edge)")
+    print (len(me.polygons) , "polygons (reference a range of loops)")
+
+    for ip in range(len(me.polygons)):
+        poly = me.polygons[ip]
+        #print("Polygon index: %d, length: %d" % (poly.index, poly.loop_total))
+        # range is used here to show how the polygons reference loops,
+        # for convenience 'poly.loop_indices' can be used instead.
+        for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+            iv = me.loops[loop_index].vertex_index
+            vert = me.vertices[iv]
+            x = vert.co.x
+            y = vert.co.y
+            z = vert.co.z
+            print(" Polygon: %d Vertex: %d , x=%.3f, y=%.3f, z=%.3f" % (ip,iv,x,y,z))
+
+def select_part_of_mesh (object_name, part):
+    o = bpy.data.objects[object_name]
+    me = o.data
+    bm = bmesh.new()   # create an empty BMesh
+    bm.from_mesh(me)   # fill it in from a Mesh
+
+    xmin = None  # find bounding box
+    for f in bm.faces:
+        for v in f.verts:
+            x = v.co.x 
+            y = v.co.y
+            z = v.co.z
+            if xmin is None:
+                xmin = x
+                xmax = xmin
+                ymin = y
+                ymax = ymin
+                zmin = z
+                zmax = zmin
+            if x > xmax:
+                xmax = x
+            if x < xmin:
+                xmin = x
+            if y > ymax:
+                ymax = y
+            if y < ymin:
+                ymin = y
+            if z > zmax:
+                zmax = z
+            if z < zmin:
+                zmin = z
+    xm = (xmax+xmin)/2.0
+    ym = (ymax+ymin)/2.0
+    zm = (zmax+zmin)/2.0
+    print ("xm = %.3f, ym = %.3f, zm = %3f"%(xm,ym,zm))
+
+    fsel = []
+    nf = len(bm.faces)
+    nrm = 0
+    for f in bm.faces:
+        dorm = False
+        for v in f.verts:
+            #v = me.vertices[iv]
+            #print (v.co,v.index)
+            d = math.sqrt((xm-v.co.x)**2.0+(zm-v.co.z)**2.0)
+            if part == "Tyre":
+                if d < 0.024:
+                    dorm = True
+            elif part == "Rim":
+                if d > 0.028:
+                    dorm = True
+                if math.fabs(v.co.y) < math.fabs(ym):
+                    dorm = True
+        if dorm:
+            nrm += 1
+            fsel.append(f)
+            f.select_set
+
+    print (nrm,"removed out of",nf)
+
+    bmesh.ops.delete(bm, geom=fsel, context="FACES")
+
+    # Finish up, write the bmesh back to the mesh
+    bm.to_mesh(me)
+    bm.free()  # free and prevent further access
+    o.select_set(False)
+
+tnm1 = ["ar_d","ar_g","av_d","av_g"]
+tnm2 = ["Ar D","Ar G","Av D","Av G"]
+for inm in range(4):
+    nm1 = tnm1[inm]
+    nm2 = tnm2[inm]
+    wheel_stl = "roue_%s.stl"%(nm1)
+    wheel_name = "Roue %s"%(nm2) 
+    rim_stl = "jante_%s.stl"%(nm1)
+    rim_name = "Jante %s"%(nm2)
+    tyre_stl = "pneu_%s.stl"%(nm1)
+    tyre_name = "Pneu %s"%(nm2) 
+    create = True
+    if create:
+        path = "/home/newubu/Teach/ue42modrob/modrob/3d-models/rc_car"
+        file_stl = os.path.join(path,wheel_stl)
+        bpy.ops.import_mesh.stl(filepath=file_stl)
+        template_object = bpy.data.objects[wheel_name]
+        bpy.ops.object.duplicate()
+        o = bpy.context.active_object  
+        o.name = tyre_name
+        bpy.ops.object.duplicate()
+        o = bpy.context.active_object  
+        o.name = rim_name
+            
+    # split the wheel in rim + Tyre
+    object_name = tyre_name
+    part = "Tyre"
+    select_part_of_mesh (object_name, part)
+    object_name = rim_name
+    part = "Rim"
+    select_part_of_mesh (object_name, part)
+
+    context = bpy.context
+    scene = context.scene
+    viewlayer = context.view_layer
+
+    # deselect all
+    obs = [o for o in scene.objects if o.type == 'MESH']
+    bpy.ops.object.select_all(action='DESELECT')    
+
+    path = "/home/newubu/Teach/ue42modrob/modrob/3d-models/rc_car"
+
+    o = bpy.data.objects[tyre_name]
+    print ("export",o.name,"in",tyre_stl)
+    viewlayer.objects.active = o
+    o.select_set(True)
+    file_stl = os.path.join(path,tyre_stl)
+    bpy.ops.export_mesh.stl(filepath=file_stl,use_selection=True)
+    o.select_set(False)
+
+    o = bpy.data.objects[rim_name]
+    print ("export",o.name,"in",rim_stl)
+    viewlayer.objects.active = o
+    o.select_set(True)
+    file_stl = os.path.join(path,rim_stl)
+    bpy.ops.export_mesh.stl(filepath=file_stl,use_selection=True)
+    o.select_set(False)
+</code>
+
+Back to [[blender:main-blender-split-bmesh|top]].

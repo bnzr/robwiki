@@ -1,0 +1,21 @@
+Back to [[:start|Main Info Page]]
+
+To physically model our robots, we mainly use GAZEBO and V-REP. Tough V-REP is not open source, it can be practical to use the EDU version for teaching applications.
+
+V-REP is provided by Coppelia Robotics Inc. ([[http://coppeliarobotics.com|]]). We will now build our own robot with V-REP and control it in Python. The main steps are : 
+  - [[vrep:download-test#v1|Download and test V-REP]]
+  - [[vrep:create-simple-robot#v1|Create a simple robot]] //(under construction ... to be completed with you-tube videos...)//
+  - [[vrep:socket-com-with-robot#v1|Using a socket to communicate with V-REP robot]]
+  - [[vrep:ros-com-with-robot#v1|Using ROS to communicate with V-REP robot]]
+  - [[vrep:blender_help-design#v1|Using Blender to build the robot]]
+  - [[vrep:create-rc-car-robot#v1|Full example - create a robot based on the CAD File of an RC car]]
+
+
+V-REP makes use of LUA language. It can sometimes be difficult to get LUA modules compiled as DLL on WINDOWS systems. For direct control of robots (i.e. without ROS) we need sockets and we need to pack/unpack the data in socket communication. To do this we need to add to LUA a module to pack/unpack data. 
+The code can be found [[http://webserver2.tecgraf.puc-rio.br/~lhf/ftp/lua/5.1/lpack.tar.gz|here]]. This LUA module is written in C. It will be used by V-REP as a shared library (**pack.so** in Linux, **pack.dll** in Windows10).
+On Linux, it's straightforward, you just have to use the **Makefile** to build the **pack.so** shared library. On Windows10, things aren't so easy. A way to build the shared library **pack.dll** is given [[vrep:build-lua-module-from-c|here]].
+
+
+
+
+
