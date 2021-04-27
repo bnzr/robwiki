@@ -24,6 +24,15 @@ This class inherits from LogicSensor class. We will now have a quick view on thi
 
 First we  insert the sensor in the SimulIDE item library in the "Experimental Ensta Bretagne" group we have created for the analog sensor. In fact, all experimental stuff will go here. We define the sensor with a short name, an icon and its corresponding class :
 <code c++>
+LibraryItem* Ds1621::libraryItem()
+{
+    return new LibraryItem(
+        tr( "Ds1621 I2C Temperature" ),
+        tr( "Experimental Ensta Bretagne" ),
+        "sensor_ldr_illumination_ue22.png",
+        "Ds1621",
+        Ds1621::construct );
+}
 </code>
 
 The main function is the constructor of the **SensorStrainGauge** object :
