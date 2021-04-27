@@ -1,5 +1,9 @@
 go back to [[electro:simulide-sensors|Adding Sensors to SimulIDE]]
 
+====== Add an analog sensor to SimulIDE ======
+
+===== Check initial build with original source files =====
+
 After decompressing the sources, we consider make the change using Linux. The procedure should be similar with Windows10 or MacOS. First we build and test the initial configuration with the original source files :
 
 <code bash>
@@ -11,4 +15,18 @@ make
 </code>
 
 We supposed all required QT5 packages have been installed. If not qmake will tell what packages are missing and have to be installed. If everything goes fine, the SimulIDE window should appear.
- 
+
+If git is used to manage the code, the following lines may be added in .gitignore :
+<code bash>
+ # build and release dir
+build_linux/build
+build_linux/release
+build_linux/executables
+build_linux/debug
+build_linux/Makefile*
+build_linux/qrc_application.cpp
+build_linux/.qmake.stash
+build_linux/SimulIDE_Build.pro.user
+</code>
+
+=====  =====
