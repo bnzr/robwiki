@@ -1,0 +1,45 @@
+What we need to install and configure is a NTP client that will connect to a list of possible NTP servers. The preferred server is npt.ensieta.ecole on the LAN (Local Area Network).
+ 
+First we install ntpdate and npt client
+<code bash>
+sudo apt install ntpdate ntp
+</code>
+
+The we have to put the IP address of the NTP server by adding the folliwin line in /etc/hosts.
+<code>
+192.168.45.227  NTP-server-host
+</code>
+If you do not know the NTP server's IP, type :
+<code bash>
+ping -c 1 ntp
+PING c4510r-227.ensieta.ecole (192.168.45.227) 56(84) bytes of data.
+64 bytes from NTP-server-host (192.168.45.227): icmp_seq=1 ttl=255 time=1.34 ms
+</code>
+
+The server must be added in the ntp configuration file /etc/ntp.conf. Add the following line at the end of the /etc/conf :
+<code>
+server ntp.ensieta.ecole iburst
+</code>
+Note that ensieta.ecole here is the domain name of the LAN.
+
+Then restart the NTP client service :
+<code bash>
+sudo service ntp restart
+</code>
+
+You can check if all is working by display the NTP queue:
+<code bash>
+ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ 0.ubuntu.pool.n .POOL.          16 p    -   64    0    0.000    0.000   0.000
+ 1.ubuntu.pool.n .POOL.          16 p    -   64    0    0.000    0.000   0.000
+ 2.ubuntu.pool.n .POOL.          16 p    -   64    0    0.000    0.000   0.000
+ 3.ubuntu.pool.n .POOL.          16 p    -   64    0    0.000    0.000   0.000
+ ntp.ubuntu.com  .POOL.          16 p    -   64    0    0.000    0.000   0.000
+*NTP-server-host 192.168.1.6      4 u   15   64    1    1.475    0.738   2.015
+</code>
+Note that the actual NTP server IP address is 192.168.1.6 
+
+
+Info taken from : [[https://vitux.com/how-to-install-ntp-server-and-client-on-ubuntu/|]]

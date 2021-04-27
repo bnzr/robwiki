@@ -1,0 +1,36 @@
+Back to [[ros:main-ros|ROS Main Page]]
+
+Go to the path were you want to create the workspace
+
+<code bash>
+cd /path/to/workspace
+</code>
+
+Create the workspace, named **ws**, and the source folder called **src**
+<code bash>
+mkdir -p ws/src
+cd ws
+catkin_make
+</code>
+
+Additional folders have been created :
+<code bash>
+ls
+build  devel  src
+</code>
+
+The content of the workspace has to be made available to ROS so that our new packages can be used in ROS.
+Normally, there is no path to our new workspace :
+<code bash>
+echo $ROS_PACKAGE_PATH
+/opt/ros/melodic/share
+</code>
+
+After initialization, the path is updated and our packages will now be usable in ROS :
+<code bash>
+source devel/setup.bash
+echo $ROS_PACKAGE_PATH
+/path/to/workspace/ws/src:/opt/ros/melodic/share
+</code>
+
+Back to [[ros:ros-create-workspace|top]].

@@ -1,0 +1,16 @@
+====== Main Info Page ======
+
+This site is a collection of information on installing and running stuff on Ubuntu dealing with mobile autonomous robotics. It covers various fields (simulation, software, embedded software, electronics, network, git, virtual machines, etc.) needed to build robots :
+
+  * [[vrep:main#v1|V-REP]]
+  * [[ros:main-ros#1|Robot Operating System - ROS]]
+  * [[gazebo:main#v1|gazebo]]
+  * [[nao:python-prog#1|Programming NAO in Python]]
+  * [[electro:main-electronics#1|Electronics and micro-controllers]]
+  * [[linux:main-linux#1|linux]]
+  * [[network:main#v1|Network Stuff]]
+  * [[git:main-git#1|git]]
+  * [[video:video-streaming#1|video and streaming]]
+  * [[docker:main#v1|Docker]]
+  * [[vm:main#v1|Virtual Machines on Linux]]
+  * [[venvpy:main#v1|Virtual Environments in Python]]

@@ -1,0 +1,7 @@
+Before programming the NAO robot in Python from your PC, you first need to install the pynaoqi libraries from Softbanks Robotics. The usefull files for Windows and Linux can be downloaded from here :
+  * for Windows : {{nao:pynaoqi-2.1.4.13.win32.exe.zip?linkonly}}
+  * for Linux {{nao:pynaoqi-python2.7-2.1.4.13-linux64.tar.gz?linkonly}}
+
+Install instructions are given in : http://doc.aldebaran.com/2-1/dev/python/install_guide.html
+
+

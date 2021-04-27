@@ -1,0 +1,11 @@
+go back to [[electro:main-electronics|]]
+
+====== SimulIDE ======
+
+SimulIDE is an electronic simulator. it can handle analog components like sensors and micro-controllers such as Arduino. It can be use on Windows, Linux and MacOS.
+The [[https://www.simulide.com/|web site]] provides useful information on downloading and using SimulIDE.
+
+If you want to build you own version from sources, you can follow the links below :
+   * [[electro:simulide-macos|SimulIDE : compiling and building on Mac OS]]
+   * [[electro:simulide-linux|SimulIDE : compiling and building on Linux]]
+   * [[electro:simulide-sensors|SimulIDE : adding sensors to SimulIDE]]

@@ -1,0 +1,17 @@
+Back to [[:start|Main Info Page]]
+
+
+Some useful git commands :
+ 
+  * [[git:git-clone-behind-proxy#1|Clone behind a proxy]]
+  * [[git:git-conflict-management#1|Conflict Management]]
+  * [[git:git-new-branch#1|Put changes in a new branch]]
+  * [[git:git-merging#1|Merging]]
+  * [[git:git-back-to-last-commit#1|Revert (discard) changes and come back to last commit]]
+  * [[git:git-restore-deleted-file#1|Restore a file deleted in a previous commit]]
+  * [[git:git-branches#1|About branches]]
+  * [[gitgit-large-files#1|Problem cloning repo with large files]]
+  * [[git:git-make-git-from-existing-folder#1|Make a git repository from an existing folder]]
+  * [[git:git-status-config#1|Status and configuration]]
+  * [[git:git-set-credentials#1|Auto authentication credentials (prevent typing user and password each time)]]
+  * [[git:git-apply-changes-in-gitignore#1|Apply changes made in .gitignore]]
