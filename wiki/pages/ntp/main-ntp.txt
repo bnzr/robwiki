@@ -1,6 +1,0 @@
-Back to [[linux:main-linux|linux]]
-
-NTP protocol allows to set the date and time of your robot using a external server. Here we use a server in the local area network to avoid proxy problems :
-
-  * [[ntp:linux-ntp-ubuntu-18-04-lts#1|ntp : Ubuntu 18.04 LTS]]
-
