@@ -1,7 +1,0 @@
-Back to [[:start|Main Info Page]]
-
-  * [[ros:ros-install#1|Install ROS]] 
-  * [[ros:ros-create-workspace#1|Create a ROS workspace]]   
-  * [[ros:ros-create-package#1|Create a ROS package]]
-  * [[ros:ros-create-noe-python#1|Create a ROS node in Python]] 
-  * [[ros:ros-ddboat-log#1|Display DDBoat Data on your laptop]] 
