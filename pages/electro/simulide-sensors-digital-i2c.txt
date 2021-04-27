@@ -2,24 +2,25 @@ go back to [[electro:simulide-sensors|Adding Sensors to SimulIDE]]
 
 ====== Add a digital sensor to SimulIDE ======
 
-We will here show how to add a digital sensor to SimulIDE. The procedure is quite similar to the analog sensor.
+We will here show how to add a digital sensor to SimulIDE. The procedure is quite similar to the creation of an analog sensor.
 
 
 ===== Create a Digital Sensor Class =====
 As for analog sensors, this class aims at making more simple the creation of other digital sensors.
-A generic **Sensor** class (logic_sensor.cpp, logic_sensor.h) has been defined in :
+A generic **LogicSensor** class (logic_sensor.cpp, logic_sensor.h) has been defined in :
 <code bash>
-src/gui/circuitwidget/components/passive/
+src/gui/circuitwidget/components/logic/
 </code>  
-
+The class inherits from the **LogicComponent** class.
 The value measured by the sensor is in the **sense** variable.
 
-===== Create a Resistive Strain Gauge =====
-The strain gauge sensor is defined by the **SensorStrainGauge** class (sensor_strain_gauge.cpp and sensor_strain_gauge.h) in the same folder :
+===== Create a DS1621 I2C Temperature Sensor =====
+Our digital sensor is a MAXIM DS1621 temperature sensor. The sensor will give its measurements via the I2C bus.
+The DS1621 sensor is defined by the **Ds1621** class (ds1621.cpp and ds1621.h) in the same folder :
 <code bash>
-src/gui/circuitwidget/components/passive/
+src/gui/circuitwidget/components/logic/
 </code> 
-This class inherits from both Sensor and Component classes. We will now have a quick view on this code and explain the main elements.
+This class inherits from both LogicSensor and Component classes. We will now have a quick view on this code and explain the main elements.
 
 First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
 <code c++>
