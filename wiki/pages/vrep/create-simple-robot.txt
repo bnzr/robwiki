@@ -1,3 +1,0 @@
-Back to [[vrep:main|V-REP Main Page]]
-
-Back to [[vrep:create-simple-robot|top.]]
