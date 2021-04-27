@@ -71,3 +71,8 @@ Then an alias is defined at the end of **src/application.qrc** file.
 <file alias="sensor_strain_gauge.png">../src/icons/components/sensor_strain_gauge.png</file>
 </code>
 
+===== Adding the Sensor in the Item Library =====
+The sensor is now added in the item library by adding 2 lines in **src/gui/circuitwidget/itemlibrary.cpp** file. First we include the definition of the sensor class in the include section of the code :
+<code c++>
+#include "sensor_strain_gauge.h"
+</code>
