@@ -59,3 +59,10 @@ LibraryItem* SensorStrainGauge::libraryItem()
         SensorStrainGauge::construct );
 }
 </code>
+
+
+===== Adding an Icon or an Image =====
+We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the proper SimulIDE folder :
+<code bash>
+cp ~/Downloads/sensor_strain_gauge.png src/icons/components/
+</code>
