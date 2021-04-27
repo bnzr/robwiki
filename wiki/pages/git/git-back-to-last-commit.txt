@@ -1,0 +1,27 @@
+Back to [[git:main-git|git main page]]
+
+To completely remove the changes and come back to last commit, first get the last commit id (hash)
+
+The full form of the hash (ID) is  :
+<code bash>
+git rev-parse  HEAD
+</code>
+
+The short form of the ID si :
+<code bash>
+git rev-parse --short HEAD
+</code>
+We call the ID we get, the COMMIT_ID 
+
+A hard (strong) come back with reset to the file state at the last commit. **All the uncommitted changes we be lost** :
+<code bash>
+git reset --hard COMMIT_ID
+</code>
+
+A smoother way is to temporarily **stash** the uncommitted changes, and add them back after resetting to last commit :
+<code bash>
+git stash
+git reset --hard COMMIT_ID
+git stash pop
+</code>
+

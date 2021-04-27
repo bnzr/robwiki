@@ -1,0 +1,30 @@
+Back to [[ros:main-ros|ROS main page]]
+
+Install on Ubuntu 18.04 LTS (ROS Melodic)
+
+Verify that we use Ubuntu 18.04 LTS (bionic) :
+<code bash>
+$ lsb_release -sc
+bionic
+</code>
+
+Add ROS packages repository to the apt list of repo, add the security key and update apt :
+<code bash>
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+sudo apt update
+</code>
+
+Install full desktop version of ROS Melodic :
+<code bash>
+sudo apt install ros-melodic-desktop-full
+</code>
+
+Add initialization of ROS in the .bashrc so that each time a new command terminal is created , ROS will be initialized properly:
+<code bash>
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+</code>
+The **source ~/bashrc** command is just to initialize ROS in the current terminal. After that, ROS will be automatically initialized each time you launch a new terminal.
+
+

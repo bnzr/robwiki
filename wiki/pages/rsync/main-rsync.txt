@@ -1,0 +1,60 @@
+back to [[linux:main-linux|linux]]
+
+The **rsync** command can be useful when working on different computers. There are many ways to use **rsync** but here we will consider only 2 cases :
+  * the use of an external drive (hdd or ssd) to synchronize a folder on different computers
+  * the direct synchronizing of a folder between several computers
+
+
+Let's consider a working folder **/home/user/workstuff** on computer 1 and a backup path on an external drive **/media/user/workstuff**. The folder **workstuff** may contain subfolders.
+
+We first create 5 files in the working folder, and we would like to update the backup folder with these new files. As **rsync** is a very powerful tool, it can be destructive if the command is not double-checked. To prevent disasters, the **-n** option can be useful as it shows what **rsync** would do but do not perform any changes. The **-r** option makes **rsync** recursive so that all the content of the folder is synchronized. The **/** at the end of the source path indicates that we would like to synchronize the whole content of this folder.
+
+<code bash>
+# create 5 empty files in the working folder
+touch file{1..5}.py
+# try the command without performing changes (-v option is for verbose)
+rsync -rvn /home/user/workstuff/ /media/user/workstuff
+# now do it !
+rsync -r /home/user/workstuff/ /media/user/workstuff
+# check it as worked
+ls /media/user/workstuff
+file1.py  file2.py  file3.py  file4.py  file5.py
+</code>
+
+Now, what occurs if we delete a file in the local folder. We will see that, in the default behavior the file is not deleted in the backup folder. To delete the file we have to explicitly tell it to **rsync** with the **-delete** option :
+<code bash>
+cd /home/user/workstuff
+rm file2.py
+rsync -r /home/user/workstuff/ /media/user/workstuff
+# file2.py has not been deleted in backup folder
+ls /media/user/workstuff
+file1.py  file2.py  file3.py  file4.py  file5.py
+# now explicitely specify to delete deleted files (check only)
+rsync -rnv --delete /home/user/workstuff/ /media/user/workstuff
+# now do it and check it's done
+rsync -r --delete /home/user/workstuff/ /media/user/workstuff
+ls /media/user/workstuff
+file1.py  file3.py  file4.py  file5.py
+</code>
+
+We can test **rsync** in the other direction, to for example, restore the local folder with  backup folder content. 
+To make some changes in the backup folder, we will create a new file and delete an existing one.
+<code bash>
+cd /media/user/workstuff
+rm file4.py
+touch file6.py
+rsync -r --delete /media/user/workstuff/ /home/user/workstuff
+# check that everything went fine 
+ls  /home/user/workstuff
+file1.py  file3.py  file5.py  file6.py
+</code>
+
+
+To make a full synchronization, the archive mode **-a** should be used. It is equivalent to -rlptgoD (no -H,-A,-X) which is recursive, preserves links, permissions, times, group, owner ..., **v** is for verbose : 
+<code bash>
+rsync -av path/to/dir path/to/syncdir
+</code>
+
+
+This page is inspired from this  
+[[https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories|tutorial]].
