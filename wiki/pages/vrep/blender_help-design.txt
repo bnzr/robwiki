@@ -1,0 +1,33 @@
+Back to [[vrep:main|V-REP Main Page]]
+
+You can fully build the robot, you can do it manually with V6REP GUI (Graphical user Interface). However it may be interesting to compute the location and the size of the components instead of entering them manually. The [[https://docs.blender.org/api/current/index.html|Python API of blender]] allows to build the robot and even the whole scene using a python script.
+ 
+First we  [[https://www.blender.org/download/|download the last version of Blender]]
+
+After downloading and decompressing, we start blender with the command line :
+<code bash>
+./blender
+</code>
+
+On the top horizontal, nearly a the right end , we click on **scripting**
+
+Then we can add code in the edit window. The we "save the code as" to have a Python file we can, if we want, edit with another editor. 
+
+Once the code is written, you simple execute it bu clicking on "run script" button in the upper right of the edit window.
+
+We the objets are OK, we export them in Collada format (compatible with Gazebo and V-REP) 
+
+... and that's it !!
+
+Here are some examples :
+
+  * [[blender:main-blender-simple-shapes#1|create mesh of simple shapes (cylinder, sphere)]]
+  * [[blender:main-blender-csg-union-shapes#1|create mesh by combining meshes with CSG union operation]]
+  * [[blender:main-blender-split-bmesh#1|split the mesh of an object according to some condition]]
+  * [[Blender:main-blender-create-track#1|create a virtual track to test autonomous robots]] 
+
+
+Back to [[vrep:blender_help-design|top]].
+
+
+

@@ -1,0 +1,41 @@
+The dockerfile is created from nvidia/opengl image for ubuntu 16.04. The librairies used by V-REP are installed. The V-REP code is downloaded from Coppelia Robotics website, here we use 3.5 version. 
+
+<code docker vrep-openGL.Dockerfile>
+FROM nvidia/opengl:1.0-glvnd-devel-ubuntu16.04
+
+# uncomment and set with IP and PORT of proxy server if you need to pass through a proxy
+# for example forIP=Proxy and PORT=8080, set docker ENV as follows:
+# ENV proxy http://proxy:8080/
+
+RUN apt-get update && apt-get install -y \
+  wget \
+  libglib2.0-0  \
+  libgl1-mesa-glx \
+  xcb \
+  "^libxcb.*" \
+  libx11-xcb-dev \
+  libglu1-mesa-dev \
+  libxrender-dev \
+  libjasper-dev \
+  libxi6 \
+  libdbus-1-3 \
+  libfontconfig1 \
+  xvfb \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN wget http://coppeliarobotics.com/files/V-REP_PRO_EDU_V3_5_0_Linux.tar.gz
+RUN tar -xf V-REP_PRO_EDU_V3_5_0_Linux.tar.gz
+RUN apt-get remove -y wget
+
+</code>
+
+The image is built with
+<cli>
+$ docker build -t vrep -f vrep-openGL.Dockerfile .
+</cli>
+
+Before executing a graphical container we need to allow X11 out put on the host with xhost command. Then we can run the container in interactive mode for debug :
+<cli>
+$ xhost +local:docker
+$ docker run -ti   --rm -e DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix --name vrep vrep
+</cli>

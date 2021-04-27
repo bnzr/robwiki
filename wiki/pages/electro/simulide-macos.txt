@@ -1,0 +1,130 @@
+go back to [[electro:simulide|SimulIDE]]
+
+If you just need to build the SimulIDE for MacOS, for example to make it available to your students, you can use a virtual machine. See [[vm:main|virtual Machines on Linux tutorial]] if you need help to install a Mac OS X virtual machine.
+
+====Get SimulIDE source code====
+
+The code source can be downloaded [[https://simulide.blogspot.com/p/downloads.html|here]]. As we may need to do some little changes to the code, it is preferable to get the sources from a git repository. After opening a terminal, type :
+<code bash>
+git --version
+git version 2.24.2 (Apple Git-127)
+</code>
+If **git** is not installed, macos we propose to install it ... so let it install.
+
+Find a github repository with the SimulIDE source code, e;g. https://github.com/bnzr/SimulIDE.git, clone it and, if it exists, select **macos** branch:
+<code bash>
+git clone https://github.com/bnzr/SimulIDE.git
+cd SimulIDE
+git checkout -b macos
+</code>
+
+====Install QT5====
+
+SimulIDE GUI (Graphical user Interface) is based on QT5. So we need to install QT5, we can do it online or offline. Here we choose the offline install and we download the file **qt-opensource-mac-x64-5.14.2.dmg** [[https://download.qt.io/archive/qt/5.14/5.14.2/qt-opensource-mac-x64-5.14.2.dmg|here]]. The latest releases can be found [[https://download.qt.io/|on the QT download site]].
+<code bash>
+hdiutil mount qt-opensource-mac-x64-5.14.2.dmg
+sudo cp -R  /Volumes/qt-opensource-mac-x64-5.14.2/qt-opensource-mac-x64-5.14.2.app /Applications
+hdiutil unmount /Volumes/qt-opensource-mac-x64-5.14.2/
+</code>
+Click on the qt-opensource-mac-x64-5.14.2 icon in Applications and proceed to installation. When finished QT5 will be installed where you asked for. If **/pathtoqt5** is the path you have chosen for your QT5 installation, it must be added to the **PATH** environment variable:
+<code bash>
+PATH=/pathtoqt5/Qt5.14.2/5.14.2/clang_64/bin:$PATH
+export PATH
+</code>
+
+====Install libelf====
+Building SimulIDE will require to use libelf.a static library at link and and libelf.h when compiling. The **libelf** package is installed using **brew**. If **brew** is not installed, just type :
+<code bash>
+ruby -e "$(sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+</code>
+It will require to type your password (as for sudo). Then you can install **libelf** :
+<code bash>
+brew install libelf
+</code>
+The path to libelf install must be given in the qmake project description file **SimulIDE.pro**. If the path is different on your computer, you will have to modify **SimulIDE.pro** at 2 places:
+  - in INCLUDEPATH:<code bash>
+    /usr/local/Cellar/libelf/0.8.13_1/include \
+    /usr/local/Cellar/libelf/0.8.13_1/include/libelf
+</code>
+  - in unix {...} <code bash>
+unix {
+    #QMAKE_LIBS += -lelf
+    QMAKE_LFLAGS += -no-pie
+    LIBS += /usr/local/lib/libelf.a
+}
+</code>
+
+====Build SimulIDE====
+Go to the SimulIDE folder where you have cloned the source code. We will call the path to SimuIDE folder **PathToSimulIDE**. Then, make sure you are in **macos** branch
+<code bash>
+cd PathToSimulIDE  # change this with the correct path to SimulIDE folder on your computer
+git checkout macos
+cd build_macos
+qmake
+make
+</code>
+
+If qmake command is not found , verify that the PATH is correctly set (see QT5 Install section above). The output of qmake should be something like that :
+<code text>
+Project MESSAGE: -----------------------------
+Project MESSAGE:      SimulIDE_0.3.12-SR8
+Project MESSAGE:     TARGET_PREFIX= /Users/byodtest/SimulIDE/SimulIDE/build_macos/release/SimulIDE_0.3.12-SR8
+Project MESSAGE: -----------------------------
+</code>
+
+//Note : if you encounter compilation errors with **uint long long**, replace this type with **unsigned long long int**. //
+
+After completed the make, the SimulIDE code can be tested in the command line :
+<code bash>
+cd release/SimulIDE_0.3.12-SR8/bin/simulide.app/Contents/MacOS
+./simulide
+</code>
+Some components like Arduino boards are missing, to get them we just need to move the **share** folder to the right place.
+<code bash>
+cd PathToSimulIDE # change this with the correct path to SimulIDE folder on your computer
+cd build_macos
+mv release/SimulIDE_0.3.12-SR8/share release/SimulIDE_0.3.12-SR8/bin/simulide.app/Contents/
+cd release/SimulIDE_0.3.12-SR8/bin/simulide.app/Contents/MacOS
+./simulide
+</code>
+Now you should have access to all components , you can test it by adding a Arduino board.
+
+====Install SimulIDE====
+We use **macdeployqt** to make the app independent of QT5 development environment :
+<code bash>
+cd PathToSimulIDE # change this with the correct path to SimulIDE folder on your computer
+cd build_macos/release/SimulIDE_0.3.12-SR8/bin
+macdeployqt simulide.app 
+cp -R simulide.app /Applications 
+</code>
+
+To check that the SimulIDE application actually do not use the QT5 development environment, the **otool** command should indicate that the libraries used by **simulide** binary are in the local workspace attached to the app.
+<code bash>
+cd /Applications/simulide.app/Contents/MacOS
+otool -L simulide
+</code>
+
+<code text>
+simulide:
+	@rpath/QtSvg.framework/Versions/5/QtSvg (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtWidgets.framework/Versions/5/QtWidgets (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtMultimedia.framework/Versions/5/QtMultimedia (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtGui.framework/Versions/5/QtGui (compatibility version 5.14.0, current version 5.14.2)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 1894.40.150)
+	/System/Library/Frameworks/Metal.framework/Versions/A/Metal (compatibility version 1.0.0, current version 212.5.15)
+	@rpath/QtXml.framework/Versions/5/QtXml (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtScript.framework/Versions/5/QtScript (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtConcurrent.framework/Versions/5/QtConcurrent (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtSerialPort.framework/Versions/5/QtSerialPort (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtNetwork.framework/Versions/5/QtNetwork (compatibility version 5.14.0, current version 5.14.2)
+	@rpath/QtCore.framework/Versions/5/QtCore (compatibility version 5.14.0, current version 5.14.2)
+	/System/Library/Frameworks/DiskArbitration.framework/Versions/A/DiskArbitration (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/AGL.framework/Versions/A/AGL (compatibility version 1.0.0, current version 1.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 902.1.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)
+</code>
+
+
+go to [[electro:simulide-macos|top]]

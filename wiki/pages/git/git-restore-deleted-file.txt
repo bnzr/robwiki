@@ -1,0 +1,14 @@
+Back to [[git:main-git|git main page]]
+
+
+Suppose the file with full path **path/to/file** has been deleted in a previous commit and we want it back
+
+First we search for the last commit referring to the file
+<code bash>
+git rev-list -n 1 HEAD -- path/to/file
+</code>
+Then will return the hash code (say **<hash_code_commit>**) of the last commit referring to the file. It is the commit that has deleted the file. So we need to get it from the commit before using **^**
+<code bash>
+git checkout <hash_code_commit>^ -- path/to/file
+</code>
+This will restore the last version of the file at its original path.

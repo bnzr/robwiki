@@ -1,0 +1,27 @@
+Back to [[git:main-git|git main page]]
+
+Branch allows to develop or correct the project without impacting on the master
+
+To create a new branch, e;g called **devel**, do:
+<code bash>
+git checkout -b devel
+</code>
+after this command you will be in **devel** branch. To change to an existing branch, just remove **-b**:
+<code bash>
+git checkout existing_branch
+</code>
+you are now in **existing_branch**.
+
+To check the branch you are in, do: 
+<code bash>
+git branch
+</code>
+
+To list all branches (local and remote) use:
+<code bash>
+git branch -a
+</code>
+If instead of **-a**, you put **-l** you get only the local branches. With **-r**, you get only the remote branches. A more detailed list of branches with their status is given by:
+<code bash>
+git show-branch
+</code>

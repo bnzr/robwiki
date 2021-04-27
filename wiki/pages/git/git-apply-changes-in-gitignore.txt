@@ -1,0 +1,10 @@
+Back to [[git:main-git|git main page]]
+
+After modifying .gitignore file, it may be convenient to apply this changes to the files maintained by git. First we remove the ca
+<code bash>
+git rm -r --cached .
+</code>
+Then you can add the files (ex; all files)
+<code bash>
+git add --all
+</code>
