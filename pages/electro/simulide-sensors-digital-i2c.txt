@@ -20,7 +20,7 @@ The DS1621 sensor is defined by the **Ds1621** class (ds1621.cpp and ds1621.h) i
 <code bash>
 src/gui/circuitwidget/components/logic/
 </code> 
-This class inherits from both LogicSensor and Component classes. We will now have a quick view on this code and explain the main elements.
+This class inherits from LogicSensor. We will now have a quick view on this code and explain the main elements.
 
 First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
 <code c++>
