@@ -76,3 +76,11 @@ The sensor is now added in the item library by adding 2 lines in **src/gui/circu
 <code c++>
 #include "sensor_strain_gauge.h"
 </code>
+And second, we add the **SensorStrainGauge** item after the last item (here SubPackage) :
+<code c++>
+    addItem( SubPackage::libraryItem() );
+
+    //Experimental Ensta Bretagne
+    addItem( SensorStrainGauge::libraryItem() );
+}
+<code>
