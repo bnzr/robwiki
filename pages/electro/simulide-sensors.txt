@@ -2,4 +2,4 @@ go back to [[electro:simulide|SimulIDE]]
 
 ====== Adding Sensors to SimulIDE ======
 
-try again
+try again and again !!!
