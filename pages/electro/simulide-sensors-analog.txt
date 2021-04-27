@@ -66,7 +66,7 @@ We may need images or icon to show the sensor either in the item library or in t
 <code bash>
 cp ~/Downloads/sensor_strain_gauge.png src/icons/components/
 </code>
-Then an alias is defined at the end of **src/application.qrc** file.
+Then an alias is defined at the end of **src/application.qrc** file before </qresource> :
 <code xml>
 <file alias="sensor_strain_gauge.png">../src/icons/components/sensor_strain_gauge.png</file>
 </code>
