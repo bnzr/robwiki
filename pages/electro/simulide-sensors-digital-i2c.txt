@@ -1,0 +1,203 @@
+go back to [[electro:simulide-sensors|Adding Sensors to SimulIDE]]
+
+====== Add a digital sensor to SimulIDE ======
+
+We will here show how to add a digital sensor to SimulIDE. The procedure is quite similar to the analog sensor.
+
+
+===== Create a Digital Sensor Class =====
+As for analog sensors, this class aims at making more simple the creation of other digital sensors.
+A generic **Sensor** class (logic_sensor.cpp, logic_sensor.h) has been defined in :
+<code bash>
+src/gui/circuitwidget/components/passive/
+</code>  
+
+The value measured by the sensor is in the **sense** variable.
+
+===== Create a Resistive Strain Gauge =====
+The strain gauge sensor is defined by the **SensorStrainGauge** class (sensor_strain_gauge.cpp and sensor_strain_gauge.h) in the same folder :
+<code bash>
+src/gui/circuitwidget/components/passive/
+</code> 
+This class inherits from both Sensor and Component classes. We will now have a quick view on this code and explain the main elements.
+
+First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
+<code c++>
+
+// create an entry with this component in the item library
+LibraryItem* SensorStrainGauge::libraryItem()
+{
+    return new LibraryItem(
+        tr( "Force - Metal Strain Gauge" ),
+        tr( "Experimental Ensta Bretagne" ),
+        "sensor_strain_gauge.png",
+        "Force sensor (strain gauge)",
+        SensorStrainGauge::construct );
+}
+</code>
+
+The main function is the constructor of the **SensorStrainGauge** object :
+<code c++>
+// create the component layout
+SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
+  : Sensor( parent, type, id )
+  , eElement( (id+"-eElement").toStdString() )
+  , m_pinA (180, QPoint(-20,0), id+"-PinA", 0, this)
+  , m_pinB (0, QPoint(20,0), id+"-PinB", 0, this)
+  , m_pinM (0, QPoint(0,0), id+"-PinM", 0, this)  // useless , but comply with constructor
+  , m_ePinA( (id+"-ePinA").toStdString(), 1 )
+  , m_ePinB( (id+"-ePinB").toStdString(), 1 )
+  , m_res ((id+"-res").toStdString())
+  {
+    Q_UNUSED( SensorStrainGauge_properties );
+
+    // connect resistor pins
+    m_res.setEpin (0,&m_pinA);
+    m_res.setEpin (1,&m_pinB);
+
+    // check pin connections
+    m_ePinTst1 = m_res.getEpin (0);
+    m_ePinTst2 = m_res.getEpin (1);
+    
+    // area of component graphics representation
+    m_area = QRectF(-16,-40,32,50);
+   
+    // define the units and reset the sensor
+    m_sense_unit = "N";
+    m_unit = "Ω";
+    setSense (0);  // start at 0 Newton
+
+    // define the positions of all the labels
+    m_idLabel->setPos(-12,24);
+    setLabelPos(-18,-30, 0);
+    setSenseLabelPos(-12, 6, 0);
+    setValLabelPos(-16, 40, 0);
+
+    // display or not the labels
+    setShowId( false );
+    setShowSense ( true );
+    setShowVal( false );
+
+    // setup the dial widget
+    m_dialW.setupWidget();
+    m_dialW.setFixedSize( 24, 24 ); // 24,24
+    m_dialW.dial->setMinimum(m_sense_min);
+    m_dialW.dial->setMaximum(m_sense_max); 
+    m_dialW.dial->setValue(m_sense_value*m_sense_unitMult);
+    m_dialW.dial->setSingleStep(m_sense_step);
+    
+    // creates and initializes the dial widget
+    m_proxy = Circuit::self()->addWidget( &m_dialW );
+    m_proxy->setParentItem( this );
+    m_proxy->setPos( QPoint( -12, 18) );
+    
+    m_dial = m_dialW.dial;
+
+    // add the component in the simulation
+    Simulator::self()->addToUpdateList( this );
+
+    // add an event when dial widget changes
+    connect( m_dial, SIGNAL(valueChanged(int)),
+             this,   SLOT  (senseChanged(int)) );
+
+  }
+</code>
+In this code, we do the following operations : 
+  * defining and connecting the two pins of the sensor resistor 
+  * drawing the rectangle showing the resistor in the circuit design area
+  * defining the sensing unit : "N" as Newton
+  * defining the component unit : "Ohm" for resistive sensor
+  * set the init value of the sensor
+  * defining the locations of all the labels and selecting the displayed labels at start
+  * creating and initializing the dial widget
+  * adding the component to the simulation
+  * creating an event when dial widget changes 
+
+In this class, we have important functions to provide to the simulator. First we need to define what is done at every simulation step, this is done  by the function **updateStep()** :
+<code c++>
+void SensorStrainGauge::updateStep()
+{
+    m_step = Simulator::self()->step();
+    double t = (double) m_step/1e6;
+    double dt = t - m_t0_tau;
+
+    m_new_resist = sensorFunction (m_sense);
+    double dr = m_new_resist - m_last_resist;
+    // Simulate time constant with a first order linear lowpass filter
+    m_resist = m_last_resist + dr * (1.0 -exp(-dt/m_tau));
+    
+    setUnit (" ");
+    setResist ( m_resist);
+
+    //qDebug() << "SensorStrainGauge::SensorStrainGauge" << m_res.res() << m_res.current()
+    //	     << m_ePinTst1->isConnected() << m_ePinTst2->isConnected() ;
+   
+    m_last_step = m_step;
+}
+</code>
+Here we use a first order linear lowpass filter to simulate the time constant of the sensor (this can be removed if you do not need time constant simulation). The commented **qDebug()** is usefull for checking that the sensor works properly.
+
+A second interesting function is **paint()** that will draw the sensor in the circuit design area. Here we use a small image to represent the sensor, but this can also be done qith Qt drawing functions.
+<code c++>
+void SensorStrainGauge::paint( QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget )
+{
+    Component::paint( p, option, widget );
+    p->drawRect( -16, -4, 32, 8 );
+    p->drawImage(QRect(-15, -40, 30, 30),
+		 QImage(QString(":/sensor_strain_gauge.png")));
+}
+</code>
+
+A third interesting function is **** than compute the resistance **r_sense** of the resistor as the function of the sensor value **sense**. Here we implement a classical strain gauge function with temperature dependency.
+<code c++>
+double SensorStrainGauge::sensorFunction (double sense)
+{
+  double r_sense;
+  m_k_long = 1+2.0*m_coef_poisson+m_cste_bridgman*(1-2*m_coef_poisson);
+  m_k = m_k_long * (1 - m_coef_transverse);
+  m_section_body = m_h_body * m_w_body;
+  m_delta_r = m_r0*m_k*sense/(m_young_modulus*m_section_body);
+  m_delta_r_t = (m_alpha_r+m_k*(m_lambda_s - m_lambda_j)) * (m_temperature - m_reference_temperature) * m_r0;
+  r_sense = m_r0 + m_delta_r + m_delta_r_t;
+  return r_sense;
+}
+</code>
+===== Adding an Icon or an Image =====
+We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the **src/icons/components** folder :
+<code bash>
+cp ~/Downloads/sensor_strain_gauge.png src/icons/components/
+</code>
+Then an alias is defined at the end of **src/application.qrc** file before </qresource> :
+<code xml>
+<file alias="sensor_strain_gauge.png">../src/icons/components/sensor_strain_gauge.png</file>
+</code>
+
+===== Adding the Sensor in the Item Library =====
+The sensor is now added in the item library by adding 2 lines in **src/gui/circuitwidget/itemlibrary.cpp** file. First we include the definition of the sensor class in the include section of the code :
+<code c++>
+#include "sensor_strain_gauge.h"
+</code>
+And second, we add the **SensorStrainGauge** item after the last item (here SubPackage). This experimental component will be in **Experimental Ensta Bretagne** in the **Other** tab :
+<code c++>
+    addItem( SubPackage::libraryItem() );
+
+    //Experimental Ensta Bretagne
+    addItem( new LibraryItem( tr("Experimental Ensta Bretagne"),tr("Other"), "ensta_experimental.png","", 0l ) );
+    addItem( SensorStrainGauge::libraryItem() );
+}
+</code>
+
+===== Building and Testing =====
+In the **build_linux** folder type :
+<code bash>
+qmake & make
+./executables/SimulIDE_0.4.15-Final/bin/simulide 
+</code>
+
+SimulIDE should have started and the new experimental menu should appear as this :
+
+{{:electro:simulide-strain-gauge-menu.png?300|}}
+
+The strain gauge sensor can now be used in a circuit as shown here when inserted in a voltage divider; Note that such sensor with little changes in resistance should preferably be inserted in a Wheatstone bridge.
+
+{{:electro:simulide-strain-gauge-circuit.png?400|}}
