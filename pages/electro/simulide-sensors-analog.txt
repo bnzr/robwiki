@@ -45,7 +45,7 @@ src/gui/circuitwidget/components/passive/
 </code> 
 This class inherits from both Sensor and Component classes. We will now have a quick view on this code and explain the main elements.
 
-First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name and the corresponding class :
+First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
 <code c++>
 
 // create an entry with this component in the item library
