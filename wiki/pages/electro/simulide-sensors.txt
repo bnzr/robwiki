@@ -1,4 +1,0 @@
-go back to [[electro:simulide|SimulIDE]]
-
-====== Adding Sensors to SimulIDE ======
-
