@@ -43,7 +43,7 @@ The strain gauge sensor is defined by the **SensorStrainGauge** class (sensor_st
 <code bash>
 src/gui/circuitwidget/components/passive/
 </code> 
-This class inherits from Sensor classes (and therefor from Component class). We will now have a quick view on this code and explain the main elements.
+This class inherits from Sensor class (and therefore from Component class). We will now have a quick view on this code and explain the main elements.
 
 First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
 <code c++>
