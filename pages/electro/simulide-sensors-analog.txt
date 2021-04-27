@@ -35,7 +35,7 @@ Many analog resistive sensors will be similar : an electrical parameter (resista
 <code bash>
 src/gui/circuitwidget/components/passive/
 </code>  
-
+The class inherits from the **Component** class.
 The value measured by the sensor is in the **sense** variable.
 
 ===== Create a Resistive Strain Gauge =====
@@ -43,7 +43,7 @@ The strain gauge sensor is defined by the **SensorStrainGauge** class (sensor_st
 <code bash>
 src/gui/circuitwidget/components/passive/
 </code> 
-This class inherits from both Sensor and Component classes. We will now have a quick view on this code and explain the main elements.
+This class inherits from Sensor classes (and therefor from Component class). We will now have a quick view on this code and explain the main elements.
 
 First we have to insert the sensor in the SimulIDE item library. To avoid polluting existing components, we create a new group called "Experimental Ensta Bretagne" where we define the sensor with a short name, an icon and the corresponding class :
 <code c++>
