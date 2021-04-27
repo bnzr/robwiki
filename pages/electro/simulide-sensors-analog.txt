@@ -60,9 +60,8 @@ LibraryItem* SensorStrainGauge::libraryItem()
 }
 </code>
 
-The main function is the constructor of the *SensorStrainGauge** object :
+The main function is the constructor of the **SensorStrainGauge** object :
 <code c++>
-
 // create the component layout
 SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
   : Sensor( parent, type, id )
@@ -82,26 +81,28 @@ SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
 
     // check pin connections
     m_ePinTst1 = m_res.getEpin (0);
-    //std::string ePinId1 = m_ePinTst1->getId();
-    //std::cout  << "SensorStrainGauge::SensorStrainGauge" << ePinId1 << std::endl;
     m_ePinTst2 = m_res.getEpin (1);
-    //std::string ePinId2 = m_ePinTst2->getId();
-    //std::cout  << "SensorStrainGauge::SensorStrainGauge" << ePinId2 << std::endl;
     
     // area of component graphics representation
     m_area = QRectF(-16,-40,32,50);
    
-    m_idLabel->setPos(-12,24);
+    // define the units and reset the sensor
     m_sense_unit = "N";
     m_unit = "Ω";
-    setSense (0);  // start at 0 °C
+    setSense (0);  // start at 0 Newton
+
+    // define the positions of all the labels
+    m_idLabel->setPos(-12,24);
     setLabelPos(-18,-30, 0);
     setSenseLabelPos(-12, 6, 0);
     setValLabelPos(-16, 40, 0);
+
+    // display or not the labels
     setShowId( false );
     setShowSense ( true );
     setShowVal( false );
 
+    // setup the dial widget
     m_dialW.setupWidget();
     m_dialW.setFixedSize( 24, 24 ); // 24,24
     m_dialW.dial->setMinimum(m_sense_min);
@@ -109,21 +110,32 @@ SensorStrainGauge::SensorStrainGauge (QObject* parent, QString type, QString id)
     m_dialW.dial->setValue(m_sense_value*m_sense_unitMult);
     m_dialW.dial->setSingleStep(m_sense_step);
     
+    // creates and initializes the dial widget
     m_proxy = Circuit::self()->addWidget( &m_dialW );
     m_proxy->setParentItem( this );
     m_proxy->setPos( QPoint( -12, 18) );
     
     m_dial = m_dialW.dial;
 
-    
+    // add the component in the simulation
     Simulator::self()->addToUpdateList( this );
 
+    // add an event when dial widget changes
     connect( m_dial, SIGNAL(valueChanged(int)),
              this,   SLOT  (senseChanged(int)) );
 
   }
 </code>
-
+In this code, we do the following operations : 
+  * defining and connecting the two pins of the sensor resistor 
+  * drawing the rectangle showing the resistor in the circuit design area
+  * defining the sensing unit : "N" as Newton
+  * defining the component unit : "Ohm" for resistive sensor
+  * set the init value of the sensor
+  * defining the locations of all the labels and selecting the displayed labels at start
+  * creating and initializing the dial widget
+  * adding the component to the simulation
+  * creating an event when dial widget changes 
 
 ===== Adding an Icon or an Image =====
 We may need images or icon to show the sensor either in the item library or in the circuit design area. In the circuit area, the display of the component if a combination of Qt graphics and images. First we add the image (ex sensor_strain_gauge.png in Downloads folder) in the **src/icons/components** folder :
