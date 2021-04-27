@@ -30,6 +30,7 @@ build_linux/SimulIDE_Build.pro.user
 </code>
 
 ===== Create a Sensor Class =====
+This step makes more simple addingnew resistive analog sensors.
 Many analog resistive sensors will be similar : an electrical parameter (resistance, capacity, etc.) will change with the measured value of a physical parameter (temperature, force, illumination, etc.). The change of the physical value is controlled with a rotary dial button. The min, max values and the steps are defined as parameters of the component. A generic **Sensor** class (sensor.cpp, senseor.h) has been defined in :
 <code bash>
 src/gui/circuitwidget/components/passive/
