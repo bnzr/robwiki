@@ -211,7 +211,7 @@ And second, we add the **SensorStrainGauge** item after the last item (here SubP
 }
 </code>
 
-==== Building and Testing ====
+===== Building and Testing =====
 In the **build_linux** folder type :
 <code bash>
 qmake & make
